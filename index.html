@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>З днем народження</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,400&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #0057b7;
+    --blue-deep: #0b2a5b;
+    --yellow: #ffd700;
+    --red: #c8102e;
+    --cream: #fff8e7;
+    --text: #fffdf5;
+    --muted: #d9e4f7;
+    --ink: #1d2340;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    color: var(--text);
+    background: radial-gradient(circle at 50% 15%, #1a4fa0, var(--blue-deep) 75%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    text-align: center;
+  }
+  h1, h2 { font-family: 'Fraunces', serif; margin: 0 0 .3em; }
+  h1 { font-size: clamp(2rem, 8vw, 3.4rem); color: var(--yellow); }
+  h2 { font-size: clamp(1.5rem, 5vw, 2.2rem); color: var(--yellow); }
+  .sub { font-family: 'Fraunces', serif; font-style: italic; font-size: 1.2rem; color: var(--muted); margin: 0 0 .6em; }
+  p { color: var(--muted); line-height: 1.6; max-width: 34rem; margin: .5em auto; }
+ 
+  /* Vyshyvanka style embroidery strips */
+  .embroidery {
+    position: fixed; left: 0; right: 0; height: 28px; z-index: 5;
+    background-color: var(--cream);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' shape-rendering='crispEdges'%3E%3Cg fill='%23c8102e'%3E%3Crect x='10' y='2' width='4' height='4'/%3E%3Crect x='6' y='6' width='4' height='4'/%3E%3Crect x='14' y='6' width='4' height='4'/%3E%3Crect x='2' y='10' width='4' height='4'/%3E%3Crect x='18' y='10' width='4' height='4'/%3E%3Crect x='6' y='14' width='4' height='4'/%3E%3Crect x='14' y='14' width='4' height='4'/%3E%3Crect x='10' y='18' width='4' height='4'/%3E%3C/g%3E%3Crect x='10' y='10' width='4' height='4' fill='%23111'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: center;
+    box-shadow: 0 0 12px rgba(0,0,0,.3);
+  }
+  .embroidery.top { top: 0; }
+  .embroidery.bottom { bottom: 0; }
+ 
+  .screen {
+    min-height: 100vh;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 16px;
+  }
+  .screen.active { display: flex; animation: fadeIn .8s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+ 
+  button {
+    font: 700 1.05rem 'Nunito', sans-serif;
+    background: var(--yellow);
+    color: var(--ink);
+    border: 0;
+    border-radius: 999px;
+    padding: 14px 28px;
+    margin: 18px 6px 0;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255, 215, 0, .3);
+    transition: transform .15s;
+  }
+  button:hover { transform: translateY(-2px); }
+  button.ghost { background: transparent; color: var(--text); border: 2px solid var(--muted); box-shadow: none; }
+ 
+  /* Music toggle */
+  #musicBtn {
+    position: fixed; right: 14px; bottom: 40px; z-index: 20;
+    width: 48px; height: 48px; padding: 0; margin: 0; border-radius: 50%;
+    font-size: 1.3rem; display: none;
+  }
+  #yt { position: fixed; left: -9999px; top: 0; width: 1px; height: 1px; }
+ 
+  /* Floating sunflowers */
+  .floaty { position: fixed; bottom: -40px; font-size: 22px; opacity: .55; pointer-events: none; animation: rise linear infinite; z-index: 1; }
+  @keyframes rise { to { transform: translateY(-115vh) rotate(360deg); } }
+ 
+  /* Gift */
+  .gift { width: 160px; height: 150px; position: relative; cursor: pointer; margin: 24px auto; animation: wobble 2s infinite; }
+  .gift .box { position: absolute; bottom: 0; width: 100%; height: 110px; background: var(--blue); border-radius: 8px; border: 3px solid #3f86e0; }
+  .gift .lid { position: absolute; top: 10px; left: -8px; width: 176px; height: 34px; background: #2f74d0; border-radius: 6px; transition: transform .6s; }
+  .gift .ribbon-v { position: absolute; bottom: 0; left: 70px; width: 20px; height: 110px; background: var(--yellow); }
+  .gift.open { animation: none; }
+  .gift.open .lid { transform: translateY(-80px) rotate(-25deg); }
+  @keyframes wobble { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-3deg); } 75% { transform: rotate(3deg); } }
+ 
+  /* Cake */
+  .cake { position: relative; width: 240px; height: 220px; margin: 30px auto 10px; }
+  .tier { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 12px 12px 6px 6px; }
+  .tier.bottom { bottom: 0; width: 240px; height: 80px; background: #7fb2f0; }
+  .tier.bottom::after { content: ''; position: absolute; bottom: 18px; left: 0; right: 0; height: 12px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' shape-rendering='crispEdges'%3E%3Cg fill='%23c8102e'%3E%3Crect x='4' y='0' width='4' height='4'/%3E%3Crect x='0' y='4' width='4' height='4'/%3E%3Crect x='8' y='4' width='4' height='4'/%3E%3Crect x='4' y='8' width='4' height='4'/%3E%3C/g%3E%3C/svg%3E"); }
+  .tier.top { bottom: 80px; width: 180px; height: 70px; background: var(--cream); }
+  .tier.top::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 18px; background: repeating-radial-gradient(circle at 10px 0, var(--yellow) 0 10px, transparent 10px 20px); border-radius: 12px 12px 0 0; }
+  .plate { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 280px; height: 14px; background: #ddd; border-radius: 50%; }
+  .candles { position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%); display: flex; gap: 22px; }
+  .candle { width: 10px; height: 44px; background: repeating-linear-gradient(45deg, var(--yellow) 0 6px, var(--blue) 6px 12px); border-radius: 3px; position: relative; cursor: pointer; }
+  .flame { position: absolute; top: -22px; left: -3px; width: 16px; height: 22px; background: radial-gradient(circle at 50% 70%, #fff7c2, #ffc83d 40%, #ff8a3d 75%, transparent 76%); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; animation: flicker .15s infinite alternate; transform-origin: bottom center; }
+  .candle.out .flame { display: none; }
+  .candle.out::after { content: ''; position: absolute; top: -26px; left: 2px; width: 6px; height: 20px; background: rgba(255,255,255,.4); border-radius: 50%; animation: smoke 1.2s forwards; }
+  @keyframes flicker { from { transform: scale(1) rotate(-2deg); } to { transform: scale(1.08, .95) rotate(2deg); } }
+  @keyframes smoke { to { opacity: 0; transform: translateY(-30px) scale(2); } }
+  .hint { font-size: .9rem; color: var(--muted); min-height: 1.4em; }
+ 
+  /* Cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; width: 100%; max-width: 640px; margin-top: 18px; position: relative; z-index: 2; }
+  .card { perspective: 800px; height: 170px; cursor: pointer; }
+  .card-inner { position: relative; width: 100%; height: 100%; transition: transform .6s; transform-style: preserve-3d; }
+  .card.flipped .card-inner { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; border-radius: 16px; display: flex; align-items: center; justify-content: center; padding: 14px; backface-visibility: hidden; }
+  .front { background: rgba(255,255,255,.08); border: 2px dashed var(--yellow); font-size: 2.2rem; }
+  .back { background: var(--cream); color: var(--ink); transform: rotateY(180deg); font-size: .95rem; line-height: 1.45; border-top: 6px solid var(--yellow); }
+  .card:nth-child(2) .back, .card:nth-child(4) .back { font-size: .78rem; }
+ 
+  /* Photos */
+  .photos { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; max-width: 760px; margin-top: 16px; position: relative; z-index: 2; }
+  .polaroid { background: #fff; padding: 10px 10px 34px; width: 200px; box-shadow: 0 10px 28px rgba(0,0,0,.35); position: relative; transition: transform .3s; }
+  .polaroid:hover { transform: rotate(0) scale(1.04) !important; z-index: 3; }
+  .polaroid img { width: 100%; height: 200px; object-fit: cover; display: block; background: #ddd; }
+  .polaroid span { position: absolute; left: 0; right: 0; bottom: 8px; color: var(--ink); font-family: 'Fraunces', serif; font-style: italic; font-size: .95rem; }
+ 
+  /* Letter */
+  .letter { background: var(--cream); color: var(--ink); max-width: 34rem; width: 100%; border-radius: 14px; padding: 28px 24px; text-align: left; box-shadow: 0 12px 40px rgba(0,0,0,.35); position: relative; z-index: 2; border-top: 10px solid var(--blue); border-bottom: 10px solid var(--yellow); }
+  .letter p { color: var(--ink); max-width: none; }
+  .letter .sign { font-family: 'Fraunces', serif; font-style: italic; font-size: 1.2rem; margin-top: 1.2em; }
+ 
+  canvas#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+</style>
+</head>
+<body>
+<div class="embroidery top"></div>
+<div class="embroidery bottom"></div>
+<canvas id="confetti"></canvas>
+<div id="yt"></div>
+<button id="musicBtn" aria-label="Toggle music">🔊</button>
+ 
+<!-- 1. Intro -->
+<section class="screen active" id="s-intro">
+  <h1 id="introTitle"></h1>
+  <p>Someone has left you a present. Tap it to open (sound on 🎶).</p>
+  <div class="gift" id="gift">
+    <div class="box"></div>
+    <div class="ribbon-v"></div>
+    <div class="lid"></div>
+  </div>
+</section>
+ 
+<!-- 2. Cake -->
+<section class="screen" id="s-cake">
+  <h1 id="cakeTitle"></h1>
+  <div class="sub" id="cakeSub"></div>
+  <p>Make a wish, then blow out the candles. You can actually blow into your mic, or just tap them.</p>
+  <div class="cake">
+    <div class="candles" id="candles"></div>
+    <div class="tier top"></div>
+    <div class="tier bottom"></div>
+    <div class="plate"></div>
+  </div>
+  <div class="hint" id="hint"></div>
+  <button id="micBtn">Use my microphone 🎤</button>
+</section>
+ 
+<!-- 3. Cards -->
+<section class="screen" id="s-cards">
+  <h2>A few things about you</h2>
+  <p>Tap each one.</p>
+  <div class="cards" id="cards"></div>
+  <button id="toNext" style="visibility:hidden">Keep going 💛</button>
+</section>
+ 
+<!-- 4. Photos (skipped if CONFIG.photos is empty) -->
+<section class="screen" id="s-photos">
+  <h2>Us 💙💛</h2>
+  <div class="photos" id="photos"></div>
+  <button id="toLetter">One more thing 💌</button>
+</section>
+ 
+<!-- 5. Letter -->
+<section class="screen" id="s-letter">
+  <div class="letter" id="letter"></div>
+  <button class="ghost" id="again">Многая літа! 🎉</button>
+</section>
+ 
+<script>
+/* ================= EDIT THESE ================= */
+const CONFIG = {
+  // Shown on the first screen and the cake screen
+  introTitle: "Привіт, Олю 🌻",
+  cakeTitle: "З днем народження! 🎂",
+  cakeSub: "Happy 22nd birthday, Olga",
+ 
+  candles: 5,
+ 
+  // YouTube video ID (the bit after v= in the link) and where to start, in seconds
+  songId: "Xjq3-W7QC3s",
+  songStart: 0,
+ 
+  // One message per card. Add or remove as many as you like.
+  cards: [
+    "My favourite thing about you is your personality, I love how easy it is to talk to you & I love how you make me smile & laugh so effortlessly.",
+    "One of my favourite memories of you was that time we cooked together, I cooked the steak whilst you made banana bread. It was such a simple thing, but being long distance we don't get many normal everyday moments like that, so it meant a lot to me.",
+    "I can't wait for you to teach me some more ukrainian words! I still haven't forgotten how to count elephants!",
+    "You are sooo intelligent & I am always so proud of you & everything you have achieved so far. You're going to be an excellent pediatrician & I can't wait to experience that with you.",
+    "I'm really looking forward to going on long walks whilst talking and finishing the days off sharing food with each other :)",
+    "I LOVE YOU <3"
+  ],
+ 
+  // Photos: put the image files in the same folder as this page and list them here.
+  // Leave the list empty [] to skip the photo screen.
+  photos: [
+    { src: "pic1.jpeg"},
+    { src: "pic2.jpeg"},
+    { src: "pic3.jpeg"},
+    { src: "pic4.jpeg"},
+    { src: "pic5.jpeg"},
+    { src: "pic6.jpeg"},
+  ],
+ 
+  // Each string is a paragraph.
+  letter: [
+    "З днем народження, моя кохана!",
+    "Сподіваюся, тобі сподобається подарунок, який чекає на тебе пізніше.",
+    "Не можу дочекатися нашої зустрічі, щоб особисто вручити тобі ще один подарунок."
+  ],
+  signOff: "Люблю тебе, Rhys x"
+};
+/* ============================================== */
+ 
+const $ = id => document.getElementById(id);
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+$('introTitle').textContent = CONFIG.introTitle;
+$('cakeTitle').textContent = CONFIG.cakeTitle;
+$('cakeSub').textContent = CONFIG.cakeSub;
+ 
+// Floating sunflowers and hearts
+const floaties = ['🌻', '💙', '💛', '🌻', '🌼'];
+for (let i = 0; i < 14; i++) {
+  const f = document.createElement('div');
+  f.className = 'floaty';
+  f.textContent = floaties[i % floaties.length];
+  f.style.left = Math.random() * 100 + 'vw';
+  f.style.animationDuration = 14 + Math.random() * 14 + 's';
+  f.style.animationDelay = -Math.random() * 20 + 's';
+  document.body.appendChild(f);
+}
+ 
+// ---------- Music (YouTube) ----------
+let player, playerReady = false, wantPlay = false, playing = false;
+const tag = document.createElement('script');
+tag.src = 'https://www.youtube.com/iframe_api';
+document.head.appendChild(tag);
+window.onYouTubeIframeAPIReady = () => {
+  player = new YT.Player('yt', {
+    width: 1, height: 1,
+    videoId: CONFIG.songId,
+    playerVars: { start: CONFIG.songStart, loop: 1, playlist: CONFIG.songId, playsinline: 1, controls: 0 },
+    events: {
+      onReady: () => { playerReady = true; if (wantPlay) startMusic(); },
+      onStateChange: e => { playing = e.data === YT.PlayerState.PLAYING; $('musicBtn').textContent = playing ? '🔊' : '🔇'; }
+    }
+  });
+};
+function startMusic() {
+  wantPlay = true;
+  if (!playerReady) return;
+  player.setVolume(70);
+  player.playVideo();
+  $('musicBtn').style.display = 'block';
+}
+$('musicBtn').addEventListener('click', () => {
+  if (!playerReady) return;
+  playing ? player.pauseVideo() : player.playVideo();
+});
+ 
+// ---------- Confetti ----------
+const cv = $('confetti'), ctx = cv.getContext('2d');
+let bits = [];
+function resize() { cv.width = innerWidth; cv.height = innerHeight; }
+addEventListener('resize', resize); resize();
+function burst(n = 160) {
+  const colours = ['#0057b7', '#ffd700', '#ffffff', '#c8102e', '#7fb2f0'];
+  for (let i = 0; i < n; i++) {
+    bits.push({
+      x: cv.width / 2, y: cv.height / 3,
+      vx: (Math.random() - .5) * 14, vy: Math.random() * -12 - 2,
+      r: Math.random() * 6 + 4, c: colours[i % colours.length],
+      a: Math.random() * Math.PI, va: (Math.random() - .5) * .3, life: 220
+    });
+  }
+}
+(function loop() {
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  bits = bits.filter(b => b.life-- > 0 && b.y < cv.height + 20);
+  for (const b of bits) {
+    b.vy += .25; b.vx *= .99; b.x += b.vx; b.y += b.vy; b.a += b.va;
+    ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.a);
+    ctx.fillStyle = b.c; ctx.fillRect(-b.r / 2, -b.r / 4, b.r, b.r / 2);
+    ctx.restore();
+  }
+  requestAnimationFrame(loop);
+})();
+ 
+// ---------- 1. Gift ----------
+$('gift').addEventListener('click', () => {
+  if ($('gift').classList.contains('open')) return;
+  $('gift').classList.add('open');
+  startMusic();
+  burst(80);
+  setTimeout(() => show('s-cake'), 900);
+});
+ 
+// ---------- 2. Candles ----------
+for (let i = 0; i < CONFIG.candles; i++) {
+  const c = document.createElement('div');
+  c.className = 'candle';
+  c.innerHTML = '<div class="flame"></div>';
+  c.addEventListener('click', () => blowOut(c));
+  $('candles').appendChild(c);
+}
+function lit() { return [...document.querySelectorAll('.candle:not(.out)')]; }
+function blowOut(c) {
+  if (c.classList.contains('out')) return;
+  c.classList.add('out');
+  const left = lit().length;
+  $('hint').textContent = left ? left + ' to go...' : '';
+  if (!left) finishCake();
+}
+let done = false, micStream;
+function finishCake() {
+  if (done) return; done = true;
+  if (micStream) micStream.getTracks().forEach(t => t.stop());
+  $('micBtn').style.display = 'none';
+  $('hint').textContent = 'Wish made ✨';
+  burst(220);
+  setTimeout(() => show('s-cards'), 2200);
+}
+$('micBtn').addEventListener('click', async () => {
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const an = ac.createAnalyser(); an.fftSize = 512;
+    ac.createMediaStreamSource(micStream).connect(an);
+    const data = new Uint8Array(an.frequencyBinCount);
+    $('micBtn').textContent = 'Listening... blow! 💨';
+    let cooldown = 0;
+    (function listen() {
+      if (done) return;
+      an.getByteFrequencyData(data);
+      // Focus on low frequencies, where blowing shows up most, so the song doesn't trigger it
+      let sum = 0; for (let i = 0; i < 20; i++) sum += data[i];
+      const vol = sum / 20;
+      if (vol > 140 && cooldown <= 0) {
+        const l = lit();
+        if (l.length) blowOut(l[Math.floor(Math.random() * l.length)]);
+        cooldown = 10;
+      }
+      cooldown--;
+      requestAnimationFrame(listen);
+    })();
+  } catch (e) {
+    $('hint').textContent = "Couldn't use the mic, just tap the candles instead";
+    $('micBtn').style.display = 'none';
+  }
+});
+ 
+// ---------- 3. Cards ----------
+let flipped = 0;
+const fronts = ['🌻', '💙', '💛', '🌸', '⭐', '🫶', '🌼', '✨'];
+CONFIG.cards.forEach((msg, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<div class="card-inner"><div class="face front">${fronts[i % fronts.length]}</div><div class="face back"></div></div>`;
+  card.querySelector('.back').textContent = msg;
+  card.addEventListener('click', () => {
+    if (card.classList.contains('flipped')) return;
+    card.classList.add('flipped');
+    if (++flipped === CONFIG.cards.length) $('toNext').style.visibility = 'visible';
+  });
+  $('cards').appendChild(card);
+});
+$('toNext').addEventListener('click', () => show(CONFIG.photos.length ? 's-photos' : 's-letter'));
+ 
+// ---------- 4. Photos ----------
+CONFIG.photos.forEach(ph => {
+  const d = document.createElement('div');
+  d.className = 'polaroid';
+  d.style.transform = `rotate(${(Math.random() * 10 - 5).toFixed(1)}deg)`;
+  const img = document.createElement('img'); img.src = ph.src; img.alt = ph.caption || '';
+  const cap = document.createElement('span'); cap.textContent = ph.caption || '';
+  d.append(img, cap);
+  $('photos').appendChild(d);
+});
+$('toLetter').addEventListener('click', () => show('s-letter'));
+ 
+// ---------- 5. Letter ----------
+CONFIG.letter.forEach(t => {
+  const p = document.createElement('p'); p.textContent = t; $('letter').appendChild(p);
+});
+const sign = document.createElement('p'); sign.className = 'sign'; sign.textContent = CONFIG.signOff;
+$('letter').appendChild(sign);
+$('again').addEventListener('click', () => burst(250));
+</script>
+</body>
+</html>
